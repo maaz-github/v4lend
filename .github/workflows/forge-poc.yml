@@ -1,0 +1,25 @@
+name: forge-poc
+on:
+  workflow_dispatch:
+    inputs:
+      match:
+        description: 'Test contract name filter (e.g. PoC)'
+        required: false
+        default: 'PoC'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: Build
+        run: forge build
+      - name: Test
+        run: forge test -vvv --match-contract "${{ inputs.match }}"
+        env:
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
